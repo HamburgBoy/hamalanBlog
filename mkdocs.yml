@@ -155,16 +155,11 @@ plugins:
       draggable: true              # 启用拖动
 
   # 在底部添加上次更新和创建文档的日期的支持
-  - git-revision-date-localized:  # 本地化日期
-      enable_creation_date: true  # 启用创建日期
-      fallback_to_build_date: true  # 回退到构建日期
-      # date datetime iso_date iso_datetime timeago
-      type: date  # 日期格式
-      exclude:    # 排除不需要显示的页面
-        - index.md
-        - tags.md
-        - about.md
-        - message-board.md
+  - git-revision-date-localized:
+      type: datetime
+      timezone: Asia/Shanghai
+      locale: zh
+      enable_creation_date: false
 
   # 标签系统
   - tags: 
