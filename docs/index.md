@@ -91,8 +91,7 @@ statistics: True
 
     ---
 
-    <!-- - [我的大二春夏课程概览](https://wbx0710.github.io/mymkdocs/SophomoreSpringSummer/Courses/index.html)
-    - [我收藏的网页](https://wbx0710.github.io/mymkdocs/Favorites/FavoritePages/index.html) -->
+    - [Pytorch学习笔记](https://hamburgboy.github.io/hamalanBlog/Pytorch/)
 
 
 -   :simple-github:{ .lg .middle } __关于我__
