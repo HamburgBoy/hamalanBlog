@@ -1,0 +1,305 @@
+site_name: Hamalan's Blog  # 网站名称
+site_url: https://hamburgboy.github.io/hamalanBlog/   # 网站地址
+site_author: Hamalan              # 网站作者
+site_description: Hamalan's Blog       # 网站描述
+# 代码仓库信息
+repo_name: hamalanBlog # 仓库名称
+repo_url: https://github.com/HamburgBoy/hamalanBlog.git # 仓库地址
+
+theme:
+  name: material        # 主题名称
+  # custom_dir: docs/overrides          # 自定义目录,用于存放自定义的css、js等文件
+  # custom_dir: ./overrides
+
+  language: zh # 默认语言
+
+  keyboard: #配置搜索快捷键
+    search: s, /
+
+  palette:    # 调色板，用于配置主题的颜色（暗黑模式切换）
+    # 可用的主题色：
+    # red, pink, purple, deep purple, indigo, blue, light blue, 
+    # cyan, teal, green, light green, lime, yellow, amber, 
+    # orange, deep orange, brown, grey, blue grey
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default # 日间模式
+      primary: indigo # # 主色调
+      accent: red # 链接等可交互元件的高亮色# 强调色
+      toggle:
+        icon: material/weather-night # 图标
+        name: 切换至夜间模式 # 鼠标悬浮提示
+    # Palette toggle for dark mode    
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate # 夜间模式
+      primary: black 
+      accent: pink
+      toggle:
+        icon: material/weather-sunny
+        name: 切换至日间模式 # 鼠标悬浮提示
+
+  font:     # 字体设置
+    text: Roboto      # 主要文本字体
+    code: Roboto Mono     # 代码字体   
+
+  icon: # 一些用到的icon   material/washing-machine-alert
+    
+    # repo: simple/github
+    # repo: customsvg/site-author # 修改网站作者仓库图标
+    edit: material/pencil-box-multiple  # 修改编辑图标
+    view: material/eye    # 修改查看图标
+    logo: simple/testcafe      # 网站logo  
+    previous: fontawesome/solid/angle-left  # 上一页图标
+    next: fontawesome/solid/angle-right     # 下一页icon
+    admonition: # 告警图标,可自定义
+      note: octicons/tag-16
+      abstract: octicons/checklist-16
+      info: octicons/info-16
+      tip: octicons/squirrel-16
+      success: octicons/check-16
+      question: octicons/question-16
+      warning: octicons/alert-16
+      failure: octicons/x-circle-16
+      danger: octicons/zap-16
+      bug: octicons/bug-16
+      example: octicons/beaker-16
+      quote: octicons/quote-16
+  # favicon: images/mkdocs_favicon.png              # 网站图标
+
+  features: # 配置主题特性
+  # - navigation.instant #- header.autohide  #自动隐藏
+  - navigation.instant.progress #进度指示器
+  - navigation.instant.preview #全局自动预览
+  - navigation.tabs #顶级部分将呈现在上面视口标题下方的菜单层中，但在移动设备上保持原样
+  # - navigation.tabs.sticky #启用粘性选项卡后，导航选项卡将锁定在标题下方，并在向下滚动时始终保持可见
+  - navigation.sections
+  - navigation.top   # 返回顶部的按钮 在上滑时出现
+  - navigation.indexs #使用目录索引
+  - navigation.footer  # 启用页脚
+  - navigation.tracking #锚点跟踪,地址栏中的 URL 会自动更新为活动锚点，如目录中突出显示的那样。
+  # - toc.integrate      # 集成目录于左边
+  - navigation.expand #打开默认展开子菜单
+
+  # 搜索主题配置
+  - search.suggest # 启用搜索建议
+  - search.highlight # 搜索出的文章关键词加入高亮
+  - search.share   #搜索分享按钮
+
+  - content.code.annotate # 启用代码注释
+  - content.code.copy    # 启用代码复制
+  # - content.code.select    # 启用代码选择,仅限赞助商
+  - content.action.edit  # 页面编辑图标
+  - content.action.view  # 页面查看图标
+  - content.tabs.link   #链接内容选项卡
+  - content.tooltips    #改进的工具提示
+  # hide:
+  # # - navigation # Hide navigation
+  # - toc        # Hide table of contents
+  - toc.follow    #启用目录的锚点关注后，侧边栏会自动滚动，以便活动锚点始终可见
+
+plugins:
+  - search: #默认插件
+      # 搜索索引设置  
+      lang: 
+        - en
+        - zh
+      separator: '[\s\-\.]+' # 分词分隔符
+      # jieba_dict: dict.txt.small
+
+  - i18n: # 多语言插件
+      docs_structure: suffix # 抄来的，不太懂
+      fallback_to_default: true # 抄来的，不太懂
+      reconfigure_material: true # 抄来的，不太懂
+      reconfigure_search: true # 抄来的，不太懂
+      languages: # 多语言配置 - 需要小心一点
+        - locale: en
+          name: English
+          build: true # 是否构建
+          # site_name: Infinity
+        - locale: zh
+          default: true # 默认语言
+          name: 简体中文
+          build: true
+          nav_translations: # 导航栏翻译，不可以有缩进
+            HOME: 首页
+            Blog: 博客
+            ABOUT: 关于
+            TAGS: 标签
+            Network communication: 网络通信
+            Tools & Software Related (Q&A): 工具&软件相关(Q&A)
+            Software testing: 软件测试
+            Message board: 留言板
+
+  # 统计分析
+  - statistics:
+      page_statistics: true # 是否在单页中显示统计信息
+      page_read_time: true # 是否显示单页预计阅读时间
+      page_images: true # 是否显示单页图片张数
+      page_check_metadata: # 如果为空，则所有页面都显示；否则包含指定 metadata 才显示单页统计信息
+      # 全局统计信息
+      # pages_placeholder: \{\{\s*pages\s*\}\} # 页面数占位符
+      # words_placeholder: \{\{\s*words\s*\}\} # 字数占位符
+      # images_placeholder: \{\{\s*codes\s*\}\} # 图片数占位符
+
+  # 图片预览插件
+  - glightbox:
+      # 基础设置
+      auto_caption: true              # 自动添加标题
+      caption_position: bottom        # 标题位置
+      # display_description: true       # 显示描述
+      # 触摸设置
+      touchNavigation: true          # 触摸导航
+      loop: true                    # 循环浏览
+      effect: zoom                  # 过渡效果
+      # 图片设置
+      width: 100%                   # 图片宽度
+      height: auto                  # 图片高度
+      zoomable: true               # 启用缩放
+      draggable: true              # 启用拖动
+
+  # 在底部添加上次更新和创建文档的日期的支持
+  - git-revision-date-localized:  # 本地化日期
+      enable_creation_date: true  # 启用创建日期
+      fallback_to_build_date: true  # 回退到构建日期
+      # date datetime iso_date iso_datetime timeago
+      type: date  # 日期格式
+      exclude:    # 排除不需要显示的页面
+        - index.md
+        - tags.md
+        - about.md
+        - message-board.md
+
+  # 标签系统
+  - tags: 
+
+# hooks:  # 钩子
+#   - hooks/socialmedia.py      # 社交媒体
+
+# 导航设置
+nav: 
+  - 首页: index.md
+
+copyright: Copyright &copy; 2025 Hamalan   #  自定义版权信息
+
+extra: 
+  generator: false  #删除页脚显示“使用 MkDocs 材料制造”
+  status: # 用于标记文档的状态,需要在md文档的元数据中添加status字段
+    new: new  #新创建的文档
+    Recently: Recently  #最近更新的文档
+    added: added #新添加的内容
+    deprecated: deprecated #弃用的内容
+    updated: updated #更新的内容
+    in-progress: in-progress #进行中的内容
+    draft: draft  #草稿状态的内容
+    review: review #正在审核中的内容
+    final: final #最终版本的内容
+  cdn:
+    # 使用国内 CDN
+    enable: true
+    provider: jsdelivr  # 或 unpkg, cdnjs
+    urls:
+      katex: https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js
+      mermaid: https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.min.js
+
+  # 社交链接，可自定义，在页面底部显示
+  social:
+    - icon: material/github
+      link: https://github.com/HamburgBoy/
+      name: GitHub
+    - icon: fontawesome/brands/bilibili
+      link: https://space.bilibili.com/397056028?spm_id_from=333.1007.0.0
+      name: Bilibili
+    - icon: material/email
+      link: mailto:<377364267@qq.com> #联系方式
+      name: QQ邮箱
+  # 分享功能配置（未实现）
+  social_share:
+    - platform: twitter
+      text: 分享到 Twitter
+      icon: material/twitter
+    - platform: facebook
+      text: 分享到 Facebook
+      icon: material/facebook
+    - platform: linkedin
+      text: 分享到 LinkedIn
+      icon: material/linkedin
+    - platform: weibo
+      text: 分享到微博
+      icon: material/sina-weibo
+  
+# 对markdown语法的扩展，支持更多的markdown语法
+markdown_extensions:
+  - meta # 支持在 Markdown 文件头部添加元数据：
+  - toc:  # 设置后在右侧边栏可以看到目录
+      permalink: true # 启用
+      toc_depth: 4          # 目录深度
+      separator: "_"        # 标题锚点分隔符
+      title: "目录"         # 设置目录标题
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds: {case: lower} # URL 转换规则
+  - abbr
+  - tables #增强的表格支持
+  - pymdownx.inlinehilite # 行内代码高亮
+  - pymdownx.snippets     # 代码片段
+  - pymdownx.magiclink    # 自动链接
+  - pymdownx.critic:      # 编辑标记,突出显示文档中添加、删除或更新的部分
+      mode: view    #查看更改
+  - pymdownx.tilde      # 删除线
+  - pymdownx.mark        # ==标记==
+  - pymdownx.caret      # 上标
+  - pymdownx.keys       # 键盘按键
+  - md_in_html
+  # 此配置允许使用简单的语法向所有内联和块级元素添加属性，将任何链接转换为按钮
+  - attr_list
+  - pymdownx.blocks.caption
+  - pymdownx.arithmatex:  # latex支持 数学公式
+      generic: true
+      # numbering: true #启用公式编号
+  - pymdownx.highlight: # 代码块高亮
+      anchor_linenums: true
+      linenums: true # 显示行号
+      auto_title: true # 显示编程语言名称
+  - pymdownx.emoji: #添加表情符号支持
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      options: 
+        custom_icons: 
+          - docs/overrides/.icons
+  # 告警信息语法
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+        custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - def_list
+  - pymdownx.tasklist: #任务列表支持
+      custom_checkbox: true    # 自定义复选框样式
+      clickable_checkbox: true # 可点击
+  - pymdownx.tabbed:    # 标签页样式
+      alternate_style: true
+
+extra_javascript:
+  # - javascripts/tasklist.js
+  # - javascripts/tabs.js
+  # KaTeX 数学公式
+  - javascripts/katex.js 
+  - javascripts/katex-auto.js
+  - javascripts/katex-numbering.js
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js  
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js
+  # Mermaid 图表
+  - https://unpkg.com/mermaid@9/dist/mermaid.min.js
+  - https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js
+  # 修改页面背景特效
+  - javascripts/extra.js
+  - javascripts/feedback.js
+  # - https://giscus.app/client.js
+
+extra_css:
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css
+  # - stylesheets/tasklist.css
+  # - stylesheets/tabs.css
+  - stylesheets/extra.css
