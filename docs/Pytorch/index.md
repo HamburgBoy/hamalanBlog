@@ -1,4 +1,6 @@
-#### Tensor的创建
+# Pytorch学习笔记
+
+## Tensor的创建
 
 ```python
 # 基本定义
@@ -54,7 +56,7 @@ a = torch.randperm(10)
 print(a)
 print(a.type())
 ```
-#### Tensor的属性
+## Tensor的属性
 
 - torch.dtype：表示张量的数据类型
 - torch.device：表示存储该张量的设备名称（默认"cpu"）
@@ -93,7 +95,7 @@ print(a)
 a = torch.sparse_coo_tensor(i, v, (4, 4)).to_dense()
 print(a)
 ```
-#### Tensor的运算
+## Tensor的运算
 
 in-place操作：相应的运算加"_"，直接把运算后的值赋给张量对象，但需满足二者的维度与数据类型相同。
 
