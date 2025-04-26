@@ -54,9 +54,6 @@ a = torch.randperm(10)
 print(a)
 print(a.type())
 ```
-
-
-
 #### Tensor的属性
 
 - torch.dtype：表示张量的数据类型
@@ -96,9 +93,6 @@ print(a)
 a = torch.sparse_coo_tensor(i, v, (4, 4)).to_dense()
 print(a)
 ```
-
-
-
 #### Tensor的运算
 
 in-place操作：相应的运算加"_"，直接把运算后的值赋给张量对象，但需满足二者的维度与数据类型相同。
@@ -197,6 +191,3 @@ print(torch.log(a))		# 以e为底的对数
 print(torch.log_(a))	# in-place操作，无需临时变量，直接把运算后的值赋给a
 print(a)
 ```
-
-
-
