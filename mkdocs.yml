@@ -282,24 +282,27 @@ markdown_extensions:
       alternate_style: true
 
 extra_javascript:
-  # - javascripts/tasklist.js
-  # - javascripts/tabs.js
-  # KaTeX 数学公式
-  - javascripts/katex.js 
-  - javascripts/katex-auto.js
-  - javascripts/katex-numbering.js
+  - assets/javascripts/katex.js
+  - assets/javascripts/clock.js
+  - assets/javascripts/mathjax.js
+  - assets/javascripts/document.js
+  - assets/javascripts/titlechange.js
+  - assets/javascripts/glightbox.min.js
+  - assets/javascripts/click.js
   - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js  
   - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js
   # Mermaid 图表
   - https://unpkg.com/mermaid@9/dist/mermaid.min.js
   - https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js
-  # 修改页面背景特效
-  - javascripts/extra.js
-  - javascripts/feedback.js
-  # - https://giscus.app/client.js
+
 
 extra_css:
+  - assets/stylesheets/clock.css
+  - assets/stylesheets/extra.css
+  - assets/stylesheets/glightbox.min.css
+  - assets/stylesheets/charging.css
+  - assets/stylesheets/card.css
+  - assets/stylesheets/tony.css
+  - assets/stylesheets/flink.css
+  - assets/stylesheets/neoteroi-mkdocs.css
   - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css
-  # - stylesheets/tasklist.css
-  # - stylesheets/tabs.css
-  - stylesheets/extra.css
