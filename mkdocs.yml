@@ -19,6 +19,9 @@ theme:
   keyboard: #配置搜索快捷键
     search: s, /
 
+  font:     # 字体设置
+    code: Roboto Mono     # 代码字体 
+
   palette:    # 调色板，用于配置主题的颜色（暗黑模式切换）
     # 可用的主题色：
     # red, pink, purple, deep purple, indigo, blue, light blue, 
