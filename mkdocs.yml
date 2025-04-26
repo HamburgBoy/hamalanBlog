@@ -6,6 +6,11 @@ site_description: Hamalan's Blog       # 网站描述
 repo_name: hamalanBlog # 仓库名称
 repo_url: https://github.com/HamburgBoy/hamalanBlog.git # 仓库地址
 
+# 导航设置
+nav: 
+  - 首页: index.md
+  - 课外学习:
+    - Pytorch学习笔记: Pytorch/index.md
 theme:
   name: material        # 主题名称
 
@@ -163,10 +168,6 @@ plugins:
 
 # hooks:  # 钩子
 #   - hooks/socialmedia.py      # 社交媒体
-
-# 导航设置
-nav: 
-  - 首页: index.md
 
 copyright: Copyright &copy; 2025 Hamalan   #  自定义版权信息
 
