@@ -37,11 +37,7 @@ theme:
       accent: pink
       toggle:
         icon: material/weather-sunny
-        name: 切换至日间模式 # 鼠标悬浮提示
-
-  font:     # 字体设置
-    text: Roboto      # 主要文本字体
-    code: Roboto Mono     # 代码字体   
+        name: 切换至日间模式 # 鼠标悬浮提示 
 
   icon: # 一些用到的icon   material/washing-machine-alert
     
@@ -306,3 +302,4 @@ extra_css:
   - assets/stylesheets/flink.css
   - assets/stylesheets/neoteroi-mkdocs.css
   - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css
+  - https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css

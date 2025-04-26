@@ -157,7 +157,7 @@ statistics: True
         <div id="box1"></div>
         <script>
             function timingTime() {
-                let start = '2024-07-10 00:00:00';
+                let start = '2025-04-26 00:00:00';
                 let startTime = new Date(start).getTime();
                 let currentTime = new Date().getTime();
                 let difference = currentTime - startTime;
