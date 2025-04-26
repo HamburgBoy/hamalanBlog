@@ -8,8 +8,6 @@ repo_url: https://github.com/HamburgBoy/hamalanBlog.git # 仓库地址
 
 theme:
   name: material        # 主题名称
-  # custom_dir: docs/overrides          # 自定义目录,用于存放自定义的css、js等文件
-  # custom_dir: ./overrides
 
   language: zh # 默认语言
 
@@ -41,8 +39,6 @@ theme:
 
   icon: # 一些用到的icon   material/washing-machine-alert
     
-    # repo: simple/github
-    # repo: customsvg/site-author # 修改网站作者仓库图标
     edit: material/pencil-box-multiple  # 修改编辑图标
     view: material/eye    # 修改查看图标
     logo: simple/testcafe      # 网站logo  
@@ -61,7 +57,8 @@ theme:
       bug: octicons/bug-16
       example: octicons/beaker-16
       quote: octicons/quote-16
-  # favicon: images/mkdocs_favicon.png              # 网站图标
+  favicon: images/logo.png              # 网站图标
+  logo: images/logo.png              # 网站图标
 
   features: # 配置主题特性
   # - navigation.instant #- header.autohide  #自动隐藏
