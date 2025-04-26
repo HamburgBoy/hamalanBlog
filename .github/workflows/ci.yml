@@ -24,7 +24,9 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
+      - run: pip install mkdocs
       - run: pip install mkdocs-material
+      - run: pip install mkdocs-static-i18n
       - run: pip install mkdocs-git-revision-date-localized-plugin
       - run: pip install mkdocs-statistics-plugin
       - run: pip install mkdocs-heti-plugin
