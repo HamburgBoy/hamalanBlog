@@ -10,7 +10,11 @@ repo_url: https://github.com/HamburgBoy/hamalanBlog.git # 仓库地址
 nav: 
   - 首页: index.md
   - 课外学习:
-    - Pytorch学习笔记: Pytorch/index.md
+    - Pytorch学习笔记: 
+      - Tensor基础: extra_learning/Pytorch/Tensor/index.md
+    - tmux学习笔记:
+      - tmux简介: extra_learning/tmux/description/index.md
+      - tmux使用基础: extra_learning/tmux/basic/index.md
 theme:
   name: material        # 主题名称
 
