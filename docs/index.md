@@ -91,7 +91,8 @@ statistics: True
 
     ---
 
-    - [Pytorch学习笔记](https://hamburgboy.github.io/hamalanBlog/Pytorch/)
+    - [Pytorch学习笔记](https://hamburgboy.github.io/hamalanBlog/extra_learning/Pytorch/Tensor/)
+    - [Tmux学习笔记](https://hamburgboy.github.io/hamalanBlog/extra_learning/tmux/description/)
 
 
 -   :simple-github:{ .lg .middle } __关于我__
