@@ -52,12 +52,20 @@ function update(dt) {
             point.width = p.size * (1 - ratio); // 宽度从头部到尾部逐渐缩小
         });
 
-        // 添加靠近屏幕边缘的渐隐效果
-        const edgeFadeMargin = 100; // 边缘渐隐的距离
-        const fadeX = Math.min(1, Math.min((p.x - edgeFadeMargin) / edgeFadeMargin, (width - p.x - edgeFadeMargin) / edgeFadeMargin));
-        const fadeY = Math.min(1, Math.min((p.y - edgeFadeMargin) / edgeFadeMargin, (height - p.y - edgeFadeMargin) / edgeFadeMargin));
-        const edgeFade = Math.max(0, Math.min(fadeX, fadeY));
-        p.life *= edgeFade;
+        // 添加进入和离开屏幕的渐隐效果
+        const fadeInMargin = 100; // 进入屏幕时的渐显距离
+        const fadeOutMargin = 100; // 离开屏幕时的渐隐距离
+
+        const fadeInX = Math.min(1, Math.max(0, (p.x - fadeInMargin) / fadeInMargin));
+        const fadeInY = Math.min(1, Math.max(0, (p.y - fadeInMargin) / fadeInMargin));
+        const fadeIn = Math.min(fadeInX, fadeInY);
+
+        const fadeOutX = Math.min(1, Math.max(0, (width - p.x - fadeOutMargin) / fadeOutMargin));
+        const fadeOutY = Math.min(1, Math.max(0, (height - p.y - fadeOutMargin) / fadeOutMargin));
+        const fadeOut = Math.min(fadeOutX, fadeOutY);
+
+        const visibility = Math.min(fadeIn, fadeOut);
+        p.life *= visibility;
     });
 
     particles = particles.filter(p => p.life > 0 && 
@@ -151,15 +159,6 @@ window.addEventListener('focus', () => {
 
 window.addEventListener('blur', () => {
     focused = false;
-});
-
-window.addEventListener('keydown', e => {
-    if (e.ctrlKey && e.key === 's') {
-        e.preventDefault();
-        disabled = !disabled;
-        canvas.style.display = disabled ? 'none' : 'block';
-        if (!disabled) requestFrame();
-    }
 });
 
 // 启动动画
