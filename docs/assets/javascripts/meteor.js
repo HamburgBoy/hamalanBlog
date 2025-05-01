@@ -49,8 +49,15 @@ function update(dt) {
         p.trail.forEach((point, index) => {
             const ratio = index / p.trail.length;
             point.alpha = 1 - ratio * 0.8;
-            point.width = p.size * (1 - (1 - ratio)); // 修正宽度变化方向，靠近星体的地方更粗
+            point.width = p.size * (1 - ratio); // 宽度从头部到尾部逐渐缩小
         });
+
+        // 添加靠近屏幕边缘的渐隐效果
+        const edgeFadeMargin = 100; // 边缘渐隐的距离
+        const fadeX = Math.min(1, Math.min((p.x - edgeFadeMargin) / edgeFadeMargin, (width - p.x - edgeFadeMargin) / edgeFadeMargin));
+        const fadeY = Math.min(1, Math.min((p.y - edgeFadeMargin) / edgeFadeMargin, (height - p.y - edgeFadeMargin) / edgeFadeMargin));
+        const edgeFade = Math.max(0, Math.min(fadeX, fadeY));
+        p.life *= edgeFade;
     });
 
     particles = particles.filter(p => p.life > 0 && 
@@ -72,11 +79,11 @@ function draw() {
         });
 
         const gradient = ctx.createLinearGradient(p.trail[0].x, p.trail[0].y, p.trail[p.trail.length - 1].x, p.trail[p.trail.length - 1].y);
-        gradient.addColorStop(0, `${p.color.replace(/\d+\.?\d*\)$/, '1)')}`); // 拖尾起点颜色
-        gradient.addColorStop(1, `${p.color.replace(/\d+\.?\d*\)$/, '0)')}`); // 拖尾终点颜色
+        gradient.addColorStop(0, `${p.color.replace(/\d+\.?\d*\)$/, '1)')}`); // 起点颜色
+        gradient.addColorStop(1, `${p.color.replace(/\d+\.?\d*\)$/, '0)')}`); // 终点颜色
 
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = p.size; // 拖尾宽度从头部开始
+        ctx.lineWidth = p.trail[0].width; // 使用起点宽度
         ctx.lineCap = 'round';
         ctx.stroke();
 
