@@ -70,8 +70,8 @@ function draw() {
 
             const prev = p.trail[i - 1];
             const gradient = ctx.createLinearGradient(prev.x, prev.y, pos.x, pos.y);
-            gradient.addColorStop(0, `${p.color.slice(0, -1)}, ${pos.alpha})`); // 修复颜色格式
-            gradient.addColorStop(1, `${p.color.slice(0, -1)}, 0)`); // 修复颜色格式
+            gradient.addColorStop(0, `${p.color.replace(/\d+\.?\d*\)$/, `${pos.alpha})`)}`); // 修复颜色格式
+            gradient.addColorStop(1, `${p.color.replace(/\d+\.?\d*\)$/, '0)')}`); // 修复颜色格式
 
             ctx.beginPath();
             ctx.moveTo(prev.x, prev.y);
