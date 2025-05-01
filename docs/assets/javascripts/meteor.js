@@ -12,59 +12,42 @@ let disabled = false;
 let focused = true;
 let lastTime = performance.now();
 
-function createMeteor() {
-    const angle = Math.PI / 3; 
-    const speed = 0.1 + Math.random() * 0.5; // 调整流星速度，减慢整体速度
-    
-    return {
-        x: Math.random() * width * 1.2 - width * 0.1,
-        y: -50,
-        vx: -Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        life: 1,
-        size: 2 + Math.random() * 2,
-        color: colours[Math.floor(Math.random() * colours.length)],
-        trail: []
-    };
-}
+// 替换流星的创建和动画逻辑
+setInterval(function() {
+    const obj = addChild("#sky", "div", 2, "star");
 
-function update(dt) {
-    if (particles.length < 30) {
-        particles.push(createMeteor());
+    for (let i = 0; i < obj.children.length; i++) {
+        const top = -50 + Math.random() * 200 + "px",
+            left = 200 + Math.random() * 1200 + "px",
+            scale = 0.3 + Math.random() * 0.5;
+        const timer = 1000 + Math.random() * 1000;
+
+        obj.children[i].style.top = top;
+        obj.children[i].style.left = left;
+        obj.children[i].style.transform = `scale(${scale})`;
+
+        requestAnimation({
+            ele: obj.children[i],
+            attr: ["top", "left", "opacity"],
+            value: [150, -150, .8],
+            time: timer,
+            flag: false,
+            fn: function() {
+                requestAnimation({
+                    ele: obj.children[i],
+                    attr: ["top", "left", "opacity"],
+                    value: [150, -150, 0],
+                    time: timer,
+                    flag: false,
+                    fn: () => {
+                        obj.parent.removeChild(obj.children[i]);
+                    }
+                });
+            }
+        });
     }
 
-    particles.forEach(p => {
-        p.x += p.vx * dt * 1000;
-        p.y += p.vy * dt * 1000;
-        p.life -= 0.02 * dt;
-
-        p.trail.push({
-            x: p.x,
-            y: p.y,
-            alpha: 1,
-            width: p.size
-        });
-        if (p.trail.length > 10) p.trail.shift();
-        
-        p.trail.forEach((point, index) => {
-            const ratio = index / p.trail.length;
-            point.alpha = 1 - ratio * 0.8;
-            point.width = p.size * (1 - ratio); // 宽度从头部到尾部逐渐缩小
-        });
-
-        // 修改为仅根据 height 进行渐隐
-        const fadeOutMargin = 100; // 离开屏幕时的渐隐距离
-
-        const fadeOutY = Math.min(1, Math.max(0, (height - p.y - fadeOutMargin) / fadeOutMargin));
-        const fadeOut = fadeOutY;
-
-        p.life *= fadeOut;
-    });
-
-    particles = particles.filter(p => p.life > 0 && 
-        p.x > -500 && p.x < width + 500 && 
-        p.y > -500 && p.y < height + 500);
-}
+}, 1000);
 
 function draw() {
     if (!ctx) return;
