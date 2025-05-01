@@ -22,7 +22,7 @@ function createMeteor() {
     const targetY = height * (0.7 + Math.random() * 0.3);
     
     // 抛物线运动参数
-    const speed = 0.04 + Math.random() * 0.02;
+    const speed = 0.01 + Math.random() * 0.005;
     const dx = targetX - startX;
     const dy = targetY - startY;
     const distance = Math.sqrt(dx*dx + dy*dy);
