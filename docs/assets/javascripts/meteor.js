@@ -1,192 +1,152 @@
-// Meteor Shower
-const fps = 60;
+// Meteor
+const fps = 30;
 const mspf = Math.floor(1000 / fps);
-const colours = ["#4a86e8", "#a64aeb", "#00ffff", "#ffffff"];
+const colours = ["#92c5ff", "#4a86e8", "#a64aeb", "#00ffff"];
 
-let width = window.innerWidth || document.documentElement.clientWidth;
-let height = window.innerHeight || document.documentElement.clientHeight;
+let width = window.innerWidth * devicePixelRatio;
+let height = window.innerHeight * devicePixelRatio;
 let canvas;
 let ctx;
-let scale = window.devicePixelRatio || 1;
-
-window.addEventListener('resize', () => {
-    width = (window.innerWidth || document.documentElement.clientWidth) * scale;
-    height = (window.innerHeight || document.documentElement.clientHeight) * scale;
-    if (canvas) {
-        canvas.width = width;
-        canvas.height = height;
-    }
-});
-
-let meteors = [];
+let particles = [];
 let disabled = false;
 let focused = true;
 let lastTime = performance.now();
-let pointerX, pointerY;
-let velocity = { x: 0, y: 0, tx: 0, ty: 0 };
 
 function createMeteor() {
-    const side = Math.floor(Math.random() * 4);
-    let startX, startY;
-    const endX = pointerX || width/2;
-    const endY = pointerY || height/2;
-    const speed = 400 + Math.random() * 200;
-
-    switch(side) {
-        case 0: startX = -20; startY = Math.random() * height; break;
-        case 1: startX = width + 20; startY = Math.random() * height; break;
-        case 2: startX = Math.random() * width; startY = -20; break;
-        case 3: startX = Math.random() * width; startY = height + 20; break;
-    }
-
-    const dx = endX - startX;
-    const dy = endY - startY;
-    const distance = Math.sqrt(dx*dx + dy*dy);
-    const duration = distance / speed;
-
+    const side = Math.floor(Math.random() * 4); // 0:left 1:right 2:top 3:bottom
+    const speed = 0.4 + Math.random() * 0.4;
+    
     return {
-        x: startX,
-        y: startY,
-        dx: dx / duration,
-        dy: dy / duration,
-        trail: [],
-        alpha: 1.0,
+        x: side === 0 ? -100 : 
+           side === 1 ? width + 100 : 
+           Math.random() * width,
+        y: side === 2 ? -100 : 
+           side === 3 ? height + 100 : 
+           Math.random() * height,
+        vx: (side === 0 ? 1 : side === 1 ? -1 : 0) * speed,
+        vy: (side === 2 ? 1 : side === 3 ? -1 : 0) * speed,
+        life: 1,
+        size: 1.5 + Math.random() * 2,
         color: colours[Math.floor(Math.random() * colours.length)],
-        size: 2 + Math.random() * 3
+        trail: []
     };
 }
 
-function updateMeteors(dt) {
-    // 添加速度惯性效果
-    velocity.tx *= 0.96;
-    velocity.ty *= 0.96;
-    velocity.x += (velocity.tx - velocity.x) * 0.8;
-    velocity.y += (velocity.ty - velocity.y) * 0.8;
-
-    // 生成新流星
-    if(Math.random() < 0.03) {
-        meteors.push(createMeteor());
+function update(dt) {
+    // Add new meteors
+    if (Math.random() < 0.03) {
+        particles.push(createMeteor());
     }
 
-    // 更新现有流星
-    for(let i = meteors.length-1; i >= 0; i--) {
-        const m = meteors[i];
-        
-        m.x += (m.dx + velocity.x) * dt;
-        m.y += (m.dy + velocity.y) * dt;
-        m.alpha -= 0.4 * dt;
+    // Update existing meteors
+    particles.forEach(p => {
+        p.x += p.vx * dt * 1000;
+        p.y += p.vy * dt * 1000;
+        p.life -= 0.2 * dt;
 
-        // 添加轨迹点
-        m.trail.push({x: m.x, y: m.y});
-        if(m.trail.length > 15) m.trail.shift();
+        // Add trail points
+        p.trail.push({x: p.x, y: p.y, alpha: p.life});
+        if (p.trail.length > 12) p.trail.shift();
+    });
 
-        // 移除过期流星
-        if(m.alpha <= 0 || m.x < -100 || m.x > width+100 || m.y < -100 || m.y > height+100) {
-            meteors.splice(i, 1);
-        }
-    }
+    // Remove expired particles
+    particles = particles.filter(p => p.life > 0 && 
+        p.x > -200 && p.x < width + 200 && 
+        p.y > -200 && p.y < height + 200);
 }
 
-function drawMeteor(m) {
-    if(m.trail.length < 2) return;
+function draw() {
+    if (!ctx) return;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    particles.forEach(p => {
+        // Draw trail
+        p.trail.forEach((pos, i) => {
+            const ratio = i / p.trail.length;
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            if (p.trail[i + 1]) {
+                ctx.lineTo(p.trail[i + 1].x, p.trail[i + 1].y);
+            }
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = p.size * (1 - ratio);
+            ctx.globalAlpha = pos.alpha * 0.8;
+            ctx.stroke();
+        });
 
-    // 绘制拖尾
-    ctx.beginPath();
-    ctx.moveTo(m.trail[0].x, m.trail[0].y);
-    for(let i=1; i<m.trail.length; i++) {
-        ctx.lineTo(m.trail[i].x, m.trail[i].y);
-    }
-    ctx.lineWidth = m.size;
-    ctx.strokeStyle = m.color;
-    ctx.lineCap = 'round';
-    ctx.globalAlpha = m.alpha;
-    ctx.stroke();
-
-    // 绘制头部光晕
-    ctx.beginPath();
-    ctx.arc(m.x, m.y, m.size*1.2, 0, Math.PI*2);
-    ctx.fillStyle = m.color;
-    ctx.globalAlpha = m.alpha*0.8;
-    ctx.fill();
+        // Draw head
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 0.8, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life;
+        ctx.fill();
+    });
+    ctx.globalAlpha = 1.0;
 }
 
 function initCanvas() {
-    if(canvas) return;
-
+    if (canvas) return;
+    
     canvas = document.createElement('canvas');
-    canvas.style = `
+    canvas.style.cssText = `
         position: fixed;
         top: 0;
         left: 0;
         pointer-events: none;
-        z-index: 255;
+        z-index: 2147483647;
     `;
-    if((document.documentElement.dataset.darkreaderMode || "").startsWith('filter')) {
-        canvas.style.filter = 'invert(1) hue-rotate(180deg)';
-    }
     document.body.appendChild(canvas);
     
+    // Dark mode adaptation
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        canvas.style.filter = 'brightness(1.5)';
+    }
+    
+    ctx = canvas.getContext('2d');
     canvas.width = width;
     canvas.height = height;
-    ctx = canvas.getContext('2d');
     
-    // 绑定事件
-    canvas.onmousemove = e => {
-        pointerX = e.clientX * scale;
-        pointerY = e.clientY * scale;
-    };
-    canvas.ontouchmove = e => {
-        pointerX = e.touches[0].clientX * scale;
-        pointerY = e.touches[0].clientY * scale;
-        e.preventDefault();
-    };
-    document.onmouseleave = () => {
-        pointerX = null;
-        pointerY = null;
-    };
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        width = window.innerWidth * devicePixelRatio;
+        height = window.innerHeight * devicePixelRatio;
+        canvas.width = width;
+        canvas.height = height;
+    });
 }
 
-function draw() {
-    if(!ctx) return;
-    
-    ctx.clearRect(0, 0, width, height);
-    ctx.globalAlpha = 1.0;
-    
-    // 绘制所有流星
-    meteors.forEach(m => drawMeteor(m));
-}
+const requestFrame = () => setTimeout(loop, mspf);
 
 function loop() {
     const now = performance.now();
     const dt = (now - lastTime) / 1000;
-
+    
     initCanvas();
-    updateMeteors(dt);
+    update(dt);
     draw();
-
+    
     lastTime = now;
-    if(focused && !disabled) {
-        setTimeout(loop, mspf);
-    }
+    if (focused && !disabled) requestFrame();
 }
 
-// 窗口事件
+// Control events
 window.addEventListener('focus', () => {
     focused = true;
     lastTime = performance.now();
-    loop();
+    requestFrame();
 });
 
 window.addEventListener('blur', () => focused = false);
 
 window.addEventListener('keydown', e => {
-    if(e.ctrlKey && e.key === 's') {
+    if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
         disabled = !disabled;
         canvas.style.display = disabled ? 'none' : 'block';
-        if(!disabled) loop();
+        if (!disabled) requestFrame();
     }
 });
 
-// 启动动画
-loop();
+// Start animation
+requestFrame();
