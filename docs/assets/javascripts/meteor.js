@@ -65,22 +65,20 @@ function draw() {
     ctx.clearRect(0, 0, width, height);
 
     particles.forEach(p => {
+        ctx.beginPath();
+        ctx.moveTo(p.trail[0].x, p.trail[0].y); // 从拖尾的起点开始
         p.trail.forEach((pos, i) => {
-            if (i === 0) return;
-
-            const prev = p.trail[i - 1];
-            const gradient = ctx.createLinearGradient(prev.x, prev.y, pos.x, pos.y);
-            gradient.addColorStop(0, `${p.color.replace(/\d+\.?\d*\)$/, `${pos.alpha})`)}`); // 修复颜色格式
-            gradient.addColorStop(1, `${p.color.replace(/\d+\.?\d*\)$/, '0)')}`); // 修复颜色格式
-
-            ctx.beginPath();
-            ctx.moveTo(prev.x, prev.y);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = pos.width;
-            ctx.lineCap = 'round';
-            ctx.stroke();
+            ctx.lineTo(pos.x, pos.y); // 连续绘制拖尾
         });
+
+        const gradient = ctx.createLinearGradient(p.trail[0].x, p.trail[0].y, p.trail[p.trail.length - 1].x, p.trail[p.trail.length - 1].y);
+        gradient.addColorStop(0, `${p.color.replace(/\d+\.?\d*\)$/, '1)')}`); // 拖尾起点颜色
+        gradient.addColorStop(1, `${p.color.replace(/\d+\.?\d*\)$/, '0)')}`); // 拖尾终点颜色
+
+        ctx.strokeStyle = gradient;
+        ctx.lineWidth = p.size; // 拖尾宽度从头部开始
+        ctx.lineCap = 'round';
+        ctx.stroke();
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
