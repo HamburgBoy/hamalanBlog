@@ -56,6 +56,7 @@ setInterval(function() {
         // 动画逻辑
         requestAnimation({
             ele: star,
+            
             attr: ["top", "left", "opacity"],
             value: [150, -150, .8],
             time: timer,
@@ -83,26 +84,31 @@ function draw() {
     ctx.clearRect(0, 0, width, height);
 
     particles.forEach(p => {
-        ctx.beginPath();
-        ctx.moveTo(p.trail[0].x, p.trail[0].y); // 从拖尾的起点开始
-        p.trail.forEach((pos, i) => {
-            ctx.lineTo(pos.x, pos.y); // 连续绘制拖尾
+        // 移除拖尾绘制逻辑，直接使用 CSS 样式
+        const star = document.createElement("div");
+        star.className = "star";
+
+        // 设置流星的初始位置和大小
+        star.style.position = "absolute";
+        star.style.opacity = "0";
+        star.style.zIndex = "10000";
+        star.style.top = `${p.y}px`;
+        star.style.left = `${p.x}px`;
+        star.style.transform = `scale(${p.size})`;
+
+        document.querySelector("#sky").appendChild(star);
+
+        // 动画逻辑
+        requestAnimation({
+            ele: star,
+            attr: ["top", "left", "opacity"],
+            value: [p.y + 150, p.x - 150, 0],
+            time: 1000 + Math.random() * 1000,
+            flag: false,
+            fn: () => {
+                star.parentElement.removeChild(star);
+            }
         });
-
-        const gradient = ctx.createLinearGradient(p.trail[0].x, p.trail[0].y, p.trail[p.trail.length - 1].x, p.trail[p.trail.length - 1].y);
-        gradient.addColorStop(0, `${p.color.replace(/\d+\.?\d*\)$/, '1)')}`); // 起点颜色
-        gradient.addColorStop(1, `${p.color.replace(/\d+\.?\d*\)$/, '0)')}`); // 终点颜色
-
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = p.trail[0].width; // 使用起点宽度
-        ctx.lineCap = 'round';
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.life;
-        ctx.fill();
     });
     ctx.globalAlpha = 1.0;
 }
