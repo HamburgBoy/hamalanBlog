@@ -120,17 +120,71 @@ function draw() {
     ctx.globalAlpha = 1.0;
 }
 
-// 初始化画布（保持不变）
-function initCanvas() { /* 同之前版本 */ }
+function initCanvas() {
+    if (canvas) return;
+    
+    canvas = document.createElement('canvas');
+    canvas.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 2147483647;
+    `;
+    document.body.appendChild(canvas);
+    
+    // 深色模式适配
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        canvas.style.filter = 'brightness(1.8) saturate(1.2)';
+    }
+    
+    ctx = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+    
+    // 窗口大小变化处理
+    window.addEventListener('resize', () => {
+        width = window.innerWidth * devicePixelRatio;
+        height = window.innerHeight * devicePixelRatio;
+        canvas.width = width;
+        canvas.height = height;
+    });
+}
 
-// 动画循环（保持不变）
 const requestFrame = () => setTimeout(loop, mspf);
-function loop() { /* 同之前版本 */ }
 
-// 事件监听（保持不变）
-window.addEventListener('focus', () => { /* 同之前版本 */ });
-window.addEventListener('blur', () => focused = false);
-window.addEventListener('keydown', e => { /* 同之前版本 */ });
+function loop() {
+    const now = performance.now();
+    const dt = (now - lastTime) / 1000;
+    
+    initCanvas();
+    update(dt);
+    draw();
+    
+    lastTime = now;
+    if (focused && !disabled) requestFrame();
+}
+
+// 窗口焦点事件
+window.addEventListener('focus', () => {
+    focused = true;
+    lastTime = performance.now();
+    requestFrame();
+});
+
+window.addEventListener('blur', () => {
+    focused = false;
+});
+
+// 快捷键控制
+window.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        disabled = !disabled;
+        canvas.style.display = disabled ? 'none' : 'block';
+        if (!disabled) requestFrame();
+    }
+});
 
 // 启动动画
 requestFrame();
