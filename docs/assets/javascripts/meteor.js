@@ -60,19 +60,19 @@ function update(dt) {
 
 function draw() {
     if (!ctx) return;
-    
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(0, 0, width, height);
-    
+
+    // 清除画布，避免透明度叠加导致页面变黑
+    ctx.clearRect(0, 0, width, height);
+
     particles.forEach(p => {
         p.trail.forEach((pos, i) => {
             if (i === 0) return;
-            
+
             const prev = p.trail[i - 1];
             const gradient = ctx.createLinearGradient(prev.x, prev.y, pos.x, pos.y);
             gradient.addColorStop(0, `${p.color.slice(0, -1)} ${pos.alpha})`);
             gradient.addColorStop(1, `${p.color.slice(0, -1)} 0)`);
-            
+
             ctx.beginPath();
             ctx.moveTo(prev.x, prev.y);
             ctx.lineTo(pos.x, pos.y);
