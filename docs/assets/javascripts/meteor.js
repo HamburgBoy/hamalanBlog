@@ -14,39 +14,66 @@ let lastTime = performance.now();
 
 // 替换流星的创建和动画逻辑
 setInterval(function() {
-    const obj = addChild("#sky", "div", 2, "star");
+    const sky = document.querySelector("#sky");
+    if (!sky) return;
 
-    for (let i = 0; i < obj.children.length; i++) {
-        const top = -50 + Math.random() * 200 + "px",
-            left = 200 + Math.random() * 1200 + "px",
-            scale = 0.3 + Math.random() * 0.5;
+    for (let i = 0; i < 2; i++) {
+        const star = document.createElement("div");
+        star.className = "star";
+
+        // 设置初始位置和大小
+        const top = -50 + Math.random() * 200;
+        const left = 200 + Math.random() * 1200;
+        const scale = 0.3 + Math.random() * 0.5;
         const timer = 1000 + Math.random() * 1000;
 
-        obj.children[i].style.top = top;
-        obj.children[i].style.left = left;
-        obj.children[i].style.transform = `scale(${scale})`;
+        star.style.position = "absolute";
+        star.style.opacity = "0";
+        star.style.zIndex = "10000";
+        star.style.top = `${top}px`;
+        star.style.left = `${left}px`;
+        star.style.transform = `scale(${scale})`;
 
+        // 动态添加伪元素样式
+        const afterStyle = document.createElement("style");
+        afterStyle.innerHTML = `
+            .star::after {
+                content: "";
+                display: block;
+                border: solid;
+                border-width: 2px 0 2px 80px;
+                border-color: transparent transparent transparent rgba(255, 255, 255, 1);
+                border-radius: 2px 0 0 2px;
+                transform: rotate(-45deg);
+                transform-origin: 0 0 0;
+                box-shadow: 0 0 20px rgba(255, 255, 255, .3);
+            }
+        `;
+        document.head.appendChild(afterStyle);
+
+        sky.appendChild(star);
+
+        // 动画逻辑
         requestAnimation({
-            ele: obj.children[i],
+            ele: star,
             attr: ["top", "left", "opacity"],
             value: [150, -150, .8],
             time: timer,
             flag: false,
             fn: function() {
                 requestAnimation({
-                    ele: obj.children[i],
+                    ele: star,
                     attr: ["top", "left", "opacity"],
                     value: [150, -150, 0],
                     time: timer,
                     flag: false,
                     fn: () => {
-                        obj.parent.removeChild(obj.children[i]);
+                        sky.removeChild(star);
                     }
                 });
             }
         });
     }
-
 }, 1000);
 
 function draw() {
