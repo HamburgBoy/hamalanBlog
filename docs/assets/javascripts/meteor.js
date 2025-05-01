@@ -1,103 +1,190 @@
-const canvas = document.getElementById('meteorCanvas');
-const ctx = canvas.getContext('2d');
+// Meteor
+const fps = 60;
+const mspf = Math.floor(1000 / fps);
+const colours = ["#fff1c1", "#7fbfff", "#ff66b2", "#be8cff"];
 
-// 初始化画布尺寸
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+let width = window.innerWidth * devicePixelRatio;
+let height = window.innerHeight * devicePixelRatio;
+let canvas;
+let ctx;
+let particles = [];
+let disabled = false;
+let focused = true;
+let lastTime = performance.now();
 
-class Meteor {
-    constructor() {
-        // 初始化参数
-        this.reset();
-        // 添加曲线运动参数
-        this.curve = Math.random() * 0.02;
-        this.curvePhase = Math.random() * Math.PI * 2;
-    }
-
-    reset() {
-        // 生成位置（右上方区域）
-        this.x = canvas.width * 0.7 + Math.random() * canvas.width * 0.3;
-        this.y = 0;
-        
-        // 运动参数（速度降低30%-50%）
-        this.speed = Math.random() * 2 + 1; // 原速度的1/3
-        this.angle = Math.PI/4 + (Math.random()-0.5)*0.2; // 添加随机角度偏移
-        
-        // 外观参数
-        this.length = 80 + Math.random() * 70; // 增加长度
-        this.opacity = 1;
-        this.lineWidth = 1.5 + Math.random(); // 增加线宽
-        this.color = `hsl(${200 + Math.random()*40}, 80%, 70%)`; // 蓝青色系
-    }
-
-    update(deltaTime) {
-        // 使用时间差保持速度稳定
-        const baseSpeed = this.speed * deltaTime * 60;
-        
-        // 添加曲线运动
-        this.x += baseSpeed * Math.cos(this.angle) + Math.sin(this.curvePhase) * 15;
-        this.y += baseSpeed * Math.sin(this.angle);
-        this.curvePhase += this.curve;
-        
-        // 透明度衰减
-        this.opacity -= 0.005;
-        
-        // 自动重置条件
-        if (this.x < -100 || 
-            this.y > canvas.height + 100 ||
-            this.opacity < 0.1) {
-            this.reset();
-        }
-    }
-
-    draw() {
-        // 创建拖尾渐变
-        const gradient = ctx.createLinearGradient(
-            this.x,
-            this.y,
-            this.x - this.length * Math.cos(this.angle),
-            this.y - this.length * Math.sin(this.angle)
-        );
-        gradient.addColorStop(0, `hsla(200, 80%, 70%, ${this.opacity})`);
-        gradient.addColorStop(1, `hsla(200, 80%, 90%, 0)`);
-
-        // 绘制流星
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y);
-        ctx.lineTo(
-            this.x - this.length * Math.cos(this.angle),
-            this.y - this.length * Math.sin(this.angle)
-        );
-        ctx.strokeStyle = gradient;
-        ctx.lineWidth = this.lineWidth;
-        ctx.lineCap = 'round';
-        ctx.stroke();
-    }
+function createMeteor() {
+    // 从右上方区域生成（屏幕右侧70%-100%，顶部0%-30%）
+    const startX = width * (0.7 + Math.random() * 0.3);
+    const startY = 0;
+    
+    // 随机目标方向（左下方区域）
+    const targetX = width * Math.random() * 0.3;
+    const targetY = height * (0.7 + Math.random() * 0.3);
+    
+    // 抛物线运动参数
+    const speed = 0.2 + Math.random() * 0.1;
+    const dx = targetX - startX;
+    const dy = targetY - startY;
+    const distance = Math.sqrt(dx*dx + dy*dy);
+    const duration = distance / (speed * 100);
+    
+    return {
+        x: startX,
+        y: startY,
+        vx: dx / duration,
+        vy: dy / duration,
+        life: 1,
+        size: 4 + Math.random() * 3,  // 增大尺寸范围
+        color: colours[Math.floor(Math.random() * colours.length)],
+        trail: [],
+        curve: Math.random() * 0.02  // 随机曲线参数
+    };
 }
 
-// 初始化流星数组
-const meteors = Array.from({length: 15}, () => new Meteor());
+function update(dt) {
+    // 增加流星生成概率
+    if (Math.random() < 0.15) {
+        particles.push(createMeteor());
+    }
 
-// 动画循环
-let lastTime = 0;
-function animate(timestamp) {
-    const deltaTime = timestamp - lastTime;
-    lastTime = timestamp;
+    particles.forEach(p => {
+        // 添加自然曲线运动
+        p.x += p.vx * dt * 1000 + Math.sin(p.y * p.curve) * 20;
+        p.y += p.vy * dt * 1000;
+        p.life -= 0.15 * dt;
 
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // 添加残影效果
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    meteors.forEach(meteor => {
-        meteor.update(deltaTime);
-        meteor.draw();
+        // 动态轨迹点
+        p.trail.push({
+            x: p.x - p.vx * 3,
+            y: p.y - p.vy * 3,
+            alpha: p.life,
+            width: p.size * 0.8
+        });
+        
+        // 控制轨迹长度
+        if (p.trail.length > 25) p.trail.shift();
+        
+        // 动态调整轨迹宽度
+        p.trail.forEach(point => {
+            point.width *= 0.96;
+            point.alpha *= 0.92;
+        });
     });
 
-    requestAnimationFrame(animate);
+    // 粒子回收
+    particles = particles.filter(p => p.life > 0.1 && 
+        p.x > -500 && p.x < width + 500 && 
+        p.y > -500 && p.y < height + 500);
 }
 
+function draw() {
+    if (!ctx) return;
+    
+    ctx.clearRect(0, 0, width, height);
+    
+    particles.forEach(p => {
+        // 绘制渐变拖尾
+        p.trail.forEach((pos, i) => {
+            if (!p.trail[i + 1]) return;
+            
+            const gradient = ctx.createLinearGradient(
+                pos.x, pos.y,
+                p.trail[i + 1].x, p.trail[i + 1].y
+            );
+            gradient.addColorStop(0, `${p.color}${Math.floor(pos.alpha * 255).toString(16)}`);
+            gradient.addColorStop(1, `${p.color}00`);
+            
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            ctx.lineTo(p.trail[i + 1].x, p.trail[i + 1].y);
+            ctx.strokeStyle = gradient;
+            ctx.lineWidth = pos.width;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+        });
+
+        // 绘制头部（带光晕效果）
+        const gradient = ctx.createRadialGradient(
+            p.x, p.y, 0, 
+            p.x, p.y, p.size * 2
+        );
+        gradient.addColorStop(0, `${p.color}ff`);
+        gradient.addColorStop(1, `${p.color}00`);
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.globalAlpha = p.life * 0.8;
+        ctx.fill();
+    });
+    ctx.globalAlpha = 1.0;
+}
+
+function initCanvas() {
+    if (canvas) return;
+    
+    canvas = document.createElement('canvas');
+    canvas.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 2147483647;
+    `;
+    document.body.appendChild(canvas);
+    
+    // 深色模式适配
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        canvas.style.filter = 'brightness(1.8) saturate(1.2)';
+    }
+    
+    ctx = canvas.getContext('2d');
+    canvas.width = width;
+    canvas.height = height;
+    
+    // 窗口大小变化处理
+    window.addEventListener('resize', () => {
+        width = window.innerWidth * devicePixelRatio;
+        height = window.innerHeight * devicePixelRatio;
+        canvas.width = width;
+        canvas.height = height;
+    });
+}
+
+const requestFrame = () => setTimeout(loop, mspf);
+
+function loop() {
+    const now = performance.now();
+    const dt = (now - lastTime) / 1000;
+    
+    initCanvas();
+    update(dt);
+    draw();
+    
+    lastTime = now;
+    if (focused && !disabled) requestFrame();
+}
+
+// 窗口焦点事件
+window.addEventListener('focus', () => {
+    focused = true;
+    lastTime = performance.now();
+    requestFrame();
+});
+
+window.addEventListener('blur', () => {
+    focused = false;
+});
+
+// 快捷键控制
+window.addEventListener('keydown', e => {
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        disabled = !disabled;
+        canvas.style.display = disabled ? 'none' : 'block';
+        if (!disabled) requestFrame();
+    }
+});
+
 // 启动动画
-animate(0);
+requestFrame();
