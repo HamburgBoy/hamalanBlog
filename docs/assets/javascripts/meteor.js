@@ -1,190 +1,154 @@
-// Meteor
-const fps = 60;
-const mspf = Math.floor(1000 / fps);
-const colours = ["rgba(255, 255, 255, 0.8)", "rgba(200, 200, 255, 0.8)"];
+// meteor.js
+(function() {
+    // ====================== 配置项 ======================
+    const defaultConfig = {
+        container: "#sky",         // 容器选择器
+        spawnRate: 1200,          // 生成间隔(ms)
+        minSpeed: 800,            // 最小动画时长
+        maxSpeed: 1500,           // 最大动画时长
+        minSize: 0.4,             // 最小尺寸
+        maxSize: 0.7,             // 最大尺寸
+        maxStars: 25,             // 最大存在数量
+        color: "rgba(255,255,255,0.9)", // 流星颜色
+        zIndex: 10000             // 层级
+    };
 
-let width = window.innerWidth * devicePixelRatio;
-let height = window.innerHeight * devicePixelRatio;
-let canvas;
-let ctx;
-let particles = [];
-let disabled = false;
-let focused = true;
-let lastTime = performance.now();
+    // 合并自定义配置
+    const config = {
+        ...defaultConfig,
+        ...(window.METEOR_CONFIG || {})
+    };
 
-// 替换流星的创建和动画逻辑
-setInterval(function() {
-    const sky = document.querySelector("#sky");
-    if (!sky) return;
+    // ====================== 核心实现 ======================
+    let intervalId = null;
+    const container = createContainer();
 
-    for (let i = 0; i < 2; i++) {
-        const star = document.createElement("div");
-        star.className = "star";
-
-        // 设置初始位置和大小
-        const top = -50 + Math.random() * 200;
-        const left = 200 + Math.random() * 1200;
-        const scale = 0.3 + Math.random() * 0.5;
-        const timer = 1000 + Math.random() * 1000;
-
-        star.style.position = "absolute";
-        star.style.opacity = "0";
-        star.style.zIndex = "10000";
-        star.style.top = `${top}px`;
-        star.style.left = `${left}px`;
-        star.style.transform = `scale(${scale})`;
-
-        // 动态添加伪元素样式
-        const afterStyle = document.createElement("style");
-        afterStyle.innerHTML = `
-            .star::after {
-                content: "";
-                display: block;
-                border: solid;
-                border-width: 2px 0 2px 80px;
-                border-color: transparent transparent transparent rgba(255, 255, 255, 1);
-                border-radius: 2px 0 0 2px;
-                transform: rotate(-45deg);
-                transform-origin: 0 0 0;
-                box-shadow: 0 0 20px rgba(255, 255, 255, .3);
-            }
-        `;
-        document.head.appendChild(afterStyle);
-
-        sky.appendChild(star);
-
-        // 动画逻辑
-        requestAnimation({
-            ele: star,
-            
-            attr: ["top", "left", "opacity"],
-            value: [150, -150, .8],
-            time: timer,
-            flag: false,
-            fn: function() {
-                requestAnimation({
-                    ele: star,
-                    attr: ["top", "left", "opacity"],
-                    value: [150, -150, 0],
-                    time: timer,
-                    flag: false,
-                    fn: () => {
-                        sky.removeChild(star);
-                    }
-                });
-            }
-        });
-    }
-}, 1000);
-
-function draw() {
-    if (!ctx) return;
-
-    // 清除画布，避免透明度叠加导致页面变黑
-    ctx.clearRect(0, 0, width, height);
-
-    particles.forEach(p => {
-        // 移除拖尾绘制逻辑，直接使用 CSS 样式
-        const star = document.createElement("div");
-        star.className = "star";
-
-        // 设置流星的初始位置和大小
-        star.style.position = "absolute";
-        star.style.opacity = "0";
-        star.style.zIndex = "10000";
-        star.style.top = `${p.y}px`;
-        star.style.left = `${p.x}px`;
-        star.style.transform = `scale(${p.size})`;
-
-        document.querySelector("#sky").appendChild(star);
-
-        // 动画逻辑
-        requestAnimation({
-            ele: star,
-            attr: ["top", "left", "opacity"],
-            value: [p.y + 150, p.x - 150, 0],
-            time: 1000 + Math.random() * 1000,
-            flag: false,
-            fn: () => {
-                star.parentElement.removeChild(star);
-            }
-        });
-    });
-    ctx.globalAlpha = 1.0;
-}
-
-function initCanvas() {
-    if (canvas) return;
-    
-    canvas = document.createElement('canvas');
-    canvas.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-        z-index: 2147483647;
-    `;
-    document.body.appendChild(canvas);
-    
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        canvas.style.filter = 'brightness(1.8) saturate(1.2)';
-    }
-    
-    ctx = canvas.getContext('2d');
-    canvas.width = width;
-    canvas.height = height;
-
-    // 添加调试日志
-    console.log('Canvas added to document:', document.body.contains(canvas));
-    console.log('Canvas context initialized:', !!ctx);
-    
-    window.addEventListener('resize', () => {
-        width = window.innerWidth * devicePixelRatio;
-        height = window.innerHeight * devicePixelRatio;
-        canvas.width = width;
-        canvas.height = height;
-    });
-}
-
-function update(dt) {
-    // 更新流星的逻辑
-    particles.forEach(p => {
-        p.x += p.vx * dt;
-        p.y += p.vy * dt;
-
-        // 如果流星超出屏幕范围，则重置其位置
-        if (p.y > height || p.x < 0 || p.x > width) {
-            p.x = Math.random() * width;
-            p.y = -10; // 从屏幕顶部重新进入
-            p.vx = -50 + Math.random() * 100;
-            p.vy = 50 + Math.random() * 100;
+    function createContainer() {
+        let el = document.querySelector(config.container);
+        if (!el) {
+            el = document.createElement('div');
+            el.id = config.container.replace('#', '');
+            Object.assign(el.style, {
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                width: '100vw',
+                height: '100vh',
+                pointerEvents: 'none',
+                zIndex: config.zIndex,
+                overflow: 'hidden'
+            });
+            document.body.appendChild(el);
         }
-    });
-}
+        return el;
+    }
 
-const requestFrame = () => setTimeout(loop, mspf);
+    function createStar() {
+        const star = document.createElement('div');
+        Object.assign(star.style, {
+            position: 'absolute',
+            opacity: '0',
+            willChange: 'transform, opacity'
+        });
 
-function loop() {
-    const now = performance.now();
-    const dt = (now - lastTime) / 1000;
-    
-    initCanvas();
-    update(dt);
-    draw();
-    
-    lastTime = now;
-    if (focused && !disabled) requestFrame();
-}
+        const tail = document.createElement('div');
+        Object.assign(tail.style, {
+            position: 'absolute',
+            border: 'solid',
+            borderWidth: '2px 0 2px 80px',
+            borderColor: `transparent transparent transparent ${config.color}`,
+            borderRadius: '2px 0 0 2px',
+            transform: 'rotate(-45deg)',
+            transformOrigin: '0 0',
+            filter: 'blur(1px)',
+            boxShadow: '0 0 15px rgba(255, 255, 255, 0.4)'
+        });
 
-window.addEventListener('focus', () => {
-    focused = true;
-    lastTime = performance.now();
-    requestFrame();
-});
+        star.appendChild(tail);
+        return star;
+    }
 
-window.addEventListener('blur', () => {
-    focused = false;
-});
+    function animateStar(star, startX, startY, duration) {
+        const startTime = Date.now();
+        const endX = startX - 400 + Math.random() * 100;
+        const endY = startY + 250 + Math.random() * 50;
 
-// 启动动画
-requestFrame();
+        function update() {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            star.style.left = `${startX + (endX - startX) * progress}px`;
+            star.style.top = `${startY + (endY - startY) * progress}px`;
+            star.style.opacity = Math.min(progress * 3, 0.8) * (1 - progress);
+
+            progress < 1 ? requestAnimationFrame(update) : star.remove();
+        }
+        requestAnimationFrame(update);
+    }
+
+    function spawnMeteor() {
+        if (container.children.length > config.maxStars) return;
+
+        const star = createStar();
+        const startX = window.innerWidth + 100;
+        const startY = -50 + Math.random() * 200;
+        const scale = config.minSize + Math.random() * (config.maxSize - config.minSize);
+        const duration = config.minSpeed + Math.random() * (config.maxSpeed - config.minSpeed);
+
+        Object.assign(star.style, {
+            left: `${startX}px`,
+            top: `${startY}px`,
+            transform: `scale(${scale})`
+        });
+
+        container.appendChild(star);
+        animateStar(star, startX, startY, duration);
+    }
+
+    function init() {
+        // 清理旧实例
+        if (intervalId) clearInterval(intervalId);
+        
+        // 重置容器尺寸
+        Object.assign(container.style, {
+            width: '100vw',
+            height: '100vh'
+        });
+
+        // 启动生成器
+        intervalId = setInterval(spawnMeteor, config.spawnRate);
+
+        // 性能优化：页面不可见时暂停
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(intervalId);
+            } else {
+                intervalId = setInterval(spawnMeteur, config.spawnRate);
+            }
+        });
+
+        // 窗口resize时重置
+        window.addEventListener('resize', () => {
+            clearInterval(intervalId);
+            intervalId = setInterval(spawnMeteor, config.spawnRate);
+        });
+    }
+
+    // ====================== 自动初始化 ======================
+    if (document.readyState === 'complete') {
+        init();
+    } else {
+        window.addEventListener('load', init);
+    }
+
+    // ====================== 公开API ======================
+    window.MeteorAnimation = {
+        destroy: () => {
+            clearInterval(intervalId);
+            container.remove();
+        },
+        restart: () => {
+            init();
+        }
+    };
+})();
