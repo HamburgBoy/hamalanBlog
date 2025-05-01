@@ -52,20 +52,13 @@ function update(dt) {
             point.width = p.size * (1 - ratio); // 宽度从头部到尾部逐渐缩小
         });
 
-        // 添加进入和离开屏幕的渐隐效果
-        const fadeInMargin = 100; // 进入屏幕时的渐显距离
+        // 修改为仅根据 height 进行渐隐
         const fadeOutMargin = 100; // 离开屏幕时的渐隐距离
 
-        const fadeInX = Math.min(1, Math.max(0, (p.x - fadeInMargin) / fadeInMargin));
-        const fadeInY = Math.min(1, Math.max(0, (p.y - fadeInMargin) / fadeInMargin));
-        const fadeIn = Math.min(fadeInX, fadeInY);
-
-        const fadeOutX = Math.min(1, Math.max(0, (width - p.x - fadeOutMargin) / fadeOutMargin));
         const fadeOutY = Math.min(1, Math.max(0, (height - p.y - fadeOutMargin) / fadeOutMargin));
-        const fadeOut = Math.min(fadeOutX, fadeOutY);
+        const fadeOut = fadeOutY;
 
-        const visibility = Math.min(fadeIn, fadeOut);
-        p.life *= visibility;
+        p.life *= fadeOut;
     });
 
     particles = particles.filter(p => p.life > 0 && 
