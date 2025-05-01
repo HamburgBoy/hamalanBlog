@@ -143,7 +143,7 @@ statistics: True
 
     <!-- 引入 JavaScript 文件 -->
     <script src="./assets/javascripts/chase.js"></script>
-    <script src="./assets/javascripts/meteor.js"></script>
+    <script src="./assets/javascripts/snow.js"></script>
 </body>
 </html>
 
