@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://hamburgboy.github.io/hamalanBlog/</loc>
+        <lastmod>2025-05-01</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hamburgboy.github.io/hamalanBlog/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hamburgboy.github.io/hamalanBlog/en/"/>
+    </url>
+    <url>
+        <loc>https://hamburgboy.github.io/hamalanBlog/extra_learning/Pytorch/Tensor/</loc>
+        <lastmod>2025-05-01</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hamburgboy.github.io/hamalanBlog/extra_learning/Pytorch/Tensor/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hamburgboy.github.io/hamalanBlog/en/extra_learning/Pytorch/Tensor/"/>
+    </url>
+    <url>
+        <loc>https://hamburgboy.github.io/hamalanBlog/extra_learning/tmux/basic/</loc>
+        <lastmod>2025-05-01</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hamburgboy.github.io/hamalanBlog/extra_learning/tmux/basic/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hamburgboy.github.io/hamalanBlog/en/extra_learning/tmux/basic/"/>
+    </url>
+    <url>
+        <loc>https://hamburgboy.github.io/hamalanBlog/extra_learning/tmux/description/</loc>
+        <lastmod>2025-05-01</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hamburgboy.github.io/hamalanBlog/extra_learning/tmux/description/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hamburgboy.github.io/hamalanBlog/en/extra_learning/tmux/description/"/>
+    </url>
+    <url>
+        <loc>https://hamburgboy.github.io/hamalanBlog/en/</loc>
+        <lastmod>2025-05-01</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hamburgboy.github.io/hamalanBlog/en/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hamburgboy.github.io/hamalanBlog/"/>
+    </url>
+    <url>
+        <loc>https://hamburgboy.github.io/hamalanBlog/en/extra_learning/Pytorch/Tensor/</loc>
+        <lastmod>2025-05-01</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hamburgboy.github.io/hamalanBlog/en/extra_learning/Pytorch/Tensor/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hamburgboy.github.io/hamalanBlog/extra_learning/Pytorch/Tensor/"/>
+    </url>
+    <url>
+        <loc>https://hamburgboy.github.io/hamalanBlog/en/extra_learning/tmux/basic/</loc>
+        <lastmod>2025-05-01</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hamburgboy.github.io/hamalanBlog/en/extra_learning/tmux/basic/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hamburgboy.github.io/hamalanBlog/extra_learning/tmux/basic/"/>
+    </url>
+    <url>
+        <loc>https://hamburgboy.github.io/hamalanBlog/en/extra_learning/tmux/description/</loc>
+        <lastmod>2025-05-01</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hamburgboy.github.io/hamalanBlog/en/extra_learning/tmux/description/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hamburgboy.github.io/hamalanBlog/extra_learning/tmux/description/"/>
+    </url>
+</urlset>
