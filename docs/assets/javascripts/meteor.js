@@ -146,6 +146,22 @@ function initCanvas() {
     });
 }
 
+function update(dt) {
+    // 更新流星的逻辑
+    particles.forEach(p => {
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+
+        // 如果流星超出屏幕范围，则重置其位置
+        if (p.y > height || p.x < 0 || p.x > width) {
+            p.x = Math.random() * width;
+            p.y = -10; // 从屏幕顶部重新进入
+            p.vx = -50 + Math.random() * 100;
+            p.vy = 50 + Math.random() * 100;
+        }
+    });
+}
+
 const requestFrame = () => setTimeout(loop, mspf);
 
 function loop() {
