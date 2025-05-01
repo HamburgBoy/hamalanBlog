@@ -14,7 +14,7 @@ let lastTime = performance.now();
 
 function createMeteor() {
     const angle = Math.PI / 3; 
-    const speed = 0.5 + Math.random() * 1.5; 
+    const speed = 0.1 + Math.random() * 0.5; // 调整流星速度，减慢整体速度
     
     return {
         x: Math.random() * width * 1.2 - width * 0.1,
@@ -49,7 +49,7 @@ function update(dt) {
         p.trail.forEach((point, index) => {
             const ratio = index / p.trail.length;
             point.alpha = 1 - ratio * 0.8;
-            point.width = p.size * (1 - ratio);
+            point.width = p.size * (1 - (1 - ratio)); // 修正宽度变化方向，靠近星体的地方更粗
         });
     });
 
