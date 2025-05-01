@@ -3,12 +3,12 @@
     // ====================== 配置项 ======================
     const defaultConfig = {
         container: "#sky",         // 容器选择器
-        spawnRate: 1200,          // 生成间隔(ms)
-        minSpeed: 800,            // 最小动画时长
-        maxSpeed: 1500,           // 最大动画时长
+        spawnRate: 200,          // 生成间隔(ms)
+        minSpeed: 2000,            // 最小动画时长
+        maxSpeed: 3500,           // 最大动画时长
         minSize: 0.4,             // 最小尺寸
         maxSize: 0.7,             // 最大尺寸
-        maxStars: 25,             // 最大存在数量
+        maxStars: 35,             // 最大存在数量
         color: "rgba(255,255,255,0.9)", // 流星颜色
         zIndex: 10000             // 层级
     };
